@@ -59,7 +59,10 @@ def compile_pymd(input_file, output_file):
 
             def save_plot_and_close(*args, **kwargs):
                 nonlocal plot_string
-                fig_title = plt.gca().get_title()
+                if plt.gcf()._suptitle is not None:
+                    fig_title = plt.gcf()._suptitle.get_text()
+                else:
+                    fig_title = plt.gca().get_title()
                 plot_name = f"{fig_title}.png"
                 plot_folder = "plots"
                 if not os.path.exists(plot_folder):
