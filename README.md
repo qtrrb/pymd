@@ -18,3 +18,9 @@ pip install .
 pymd example.pymd
 cat example.md
 ```
+
+## Why use this over x?
+
+- Python Markdown documents can be worked on in any text editor such as vim, without plugins and the use of the web browser.
+- Will work out of the box with tools such as pandoc, it doesn't implement any superfluous conversion tools, it is as barebones as it needs to be.
+- Perfect for Python-only people, no need to install a new language and libraries such as reticulate to use rmarkdown with Python.
