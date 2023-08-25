@@ -12,7 +12,8 @@ try:
 except ModuleNotFoundError:
     PLT_IS_AVAILABLE = False
     print(
-        "\033[1m\033[93m⚠ Warning: 'matplotlib' is not installed. Plotting inside code blocks won't be available.\033[0m\033[0m"
+        "\033[1m\033[93m⚠ Warning: 'matplotlib' is not installed. "
+        "Plotting inside code blocks won't be available.\033[0m\033[0m"
     )
 
 
@@ -48,7 +49,8 @@ def compile_pymd(input_file, output_file):
         python_blocks = re.findall(r"```python(.*?)```", content, re.DOTALL)
         if not python_blocks:
             print(
-                "\033[1m\033[93mNo Python code blocks found in the input file.\033[0m\033[0m"
+                "\033[1m\033[93mNo Python code blocks found in the input file."
+                "\033[0m\033[0m"
             )
             return
 
@@ -106,7 +108,8 @@ def compile_pymd(input_file, output_file):
             f.write(output_content)
 
         print(
-            f"\033[1m\033[92m✔ Compilation successful. Output written to {output_file}\033[0m\033[0m"
+            "\033[1m\033[92m✔ Compilation successful. "
+            f"Output written to {output_file}\033[0m\033[0m"
         )
 
     except FileNotFoundError:
@@ -123,7 +126,8 @@ def main():
         input_file = sys.argv[1]
         if not input_file.endswith(".pymd"):
             print(
-                "\033[1m\033[91m✖ Error: Input file must have the '.pymd' extension.\033[0m\033[0m"
+                "\033[1m\033[91m✖ Error: "
+                "Input file must have the '.pymd' extension.\033[0m\033[0m"
             )
         else:
             output_file = input_file.replace(".pymd", ".md")
