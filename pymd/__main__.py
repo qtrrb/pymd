@@ -1,9 +1,14 @@
-import sys
 import re
 import traceback
 from io import StringIO
 import contextlib
 import os
+import argparse
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 try:
     import matplotlib.pyplot as plt
@@ -11,9 +16,9 @@ try:
     PLT_IS_AVAILABLE = True
 except ModuleNotFoundError:
     PLT_IS_AVAILABLE = False
-    print(
-        "\033[1m\033[93m⚠ Warning: 'matplotlib' is not installed. "
-        "Plotting inside code blocks won't be available.\033[0m\033[0m"
+    logger.warning(
+        "⚠ Warning: 'matplotlib' is not installed. Plotting inside code "
+        "blocks won't be available"
     )
 
 
@@ -31,10 +36,7 @@ def execute_python_code(code_block):
         except Exception:
             error_message = traceback.format_exc()
 
-    return (
-        output.getvalue(),
-        error_message,
-    )
+    return output.getvalue(), error_message
 
 
 def compile_pymd(input_file, output_file):
@@ -48,15 +50,11 @@ def compile_pymd(input_file, output_file):
 
         python_blocks = re.findall(r"```python(.*?)```", content, re.DOTALL)
         if not python_blocks:
-            print(
-                "\033[1m\033[93mNo Python code blocks found in the input file."
-                "\033[0m\033[0m"
-            )
+            logger.warning("⚠ No Python code blocks found in the input file.")
             return
 
         output_content = content
 
-        plot_string = ""
         if PLT_IS_AVAILABLE:
 
             def save_plot_and_close(*args, **kwargs):
@@ -107,31 +105,26 @@ def compile_pymd(input_file, output_file):
         with open(output_file, "w") as f:
             f.write(output_content)
 
-        print(
-            "\033[1m\033[92m✔ Compilation successful. "
-            f"Output written to {output_file}\033[0m\033[0m"
-        )
+        logger.info("✔ Compilation successful. Output written to %s", output_file)
 
     except FileNotFoundError:
-        print("\033[1m\033[91m✖ Error: Input file not found.\033[0m\033[0m")
+        logger.error("✖ Error: Input file not found.")
     except Exception as e:
-        print(f"\033[1m\033[91m✖ Error occurred: {str(e)}\033[0m\033[0m")
+        logger.error("✖ Error: %s", str(e))
         traceback.print_exc()
 
 
 def main():
-    if len(sys.argv) != 2:
-        print("\033[1m\033[94mUsage: python pymd.py input_file.pymd\033[0m\033[0m")
+    parser = argparse.ArgumentParser(description="Compile pymd files")
+    parser.add_argument("input_file", help="Input .pymd file")
+    args = parser.parse_args()
+
+    input_file = args.input_file
+    if not input_file.endswith(".pymd"):
+        logger.error("✖ Error: Input file must have the '.pymd' extension.")
     else:
-        input_file = sys.argv[1]
-        if not input_file.endswith(".pymd"):
-            print(
-                "\033[1m\033[91m✖ Error: "
-                "Input file must have the '.pymd' extension.\033[0m\033[0m"
-            )
-        else:
-            output_file = input_file.replace(".pymd", ".md")
-            compile_pymd(input_file, output_file)
+        output_file = input_file.replace(".pymd", ".md")
+        compile_pymd(input_file, output_file)
 
 
 if __name__ == "__main__":
